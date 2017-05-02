@@ -45,14 +45,23 @@ def merge_datasets(filepaths, dim='model'):
     return xr.concat(dsets, dim=pd.Index(mdls, name=dim))
 
 
-def period_reduce(data,period=20, reduce='mean', dim='year'):
+def period_reduce(data,period=20, dim='year'):
     '''
-    Takes a periodized summary of the data along the specified dimension
+    Takes a periodized mean of the data along the specified dimension
 
+    Parameters
+    ----------
+    data: Xarray Dataset
+
+    period: int
+        time period to 
+
+    dim: str
+        time dimension to take mean along
 
     Returns
     -------
-    Xarray DataSetdsgpd
+    Xarray DataSet
     '''
 
 
@@ -68,9 +77,14 @@ def get_weights(path):
     '''
     Gets the weights for models for SMME weighting
 
+    Parameters
+    ----------
+    path: str
+        path to read in the SMME-weights
+
     Returns
     -------
-    pd.Series
+    pd.Series of model weights 
 
     '''
 
@@ -88,7 +102,16 @@ def get_weights(path):
 
 def upper_coord_names(ds, dim):
     '''
-    Coerces coord names to upper case
+    Coerces coord names to upper case and removes 
+
+    Paramters
+    ---------
+    ds: Xarray Dataset
+
+    
+    Returns
+    -------
+    Xarray Dataset
 
 
     '''
@@ -97,15 +120,37 @@ def upper_coord_names(ds, dim):
 
     ds[dim] = list(map(lambda x: x.upper(), ds[dim].values))
 
-    #we need to drop some of the coords for the ds
 
-    ds = ds[2:,:,:,0]
+    
 
     return ds
 
 
-def get_quantiiles(ds, qauntiles, weights, dim, years=['2020', '2040','2060','2080']):
+def get_quantiiles(ds, quantiles, weights, dim, years=['2020', '2040','2060','2080']):
+    '''
+    Gets weighted quantiles of Climate model outputs
+    Writes outputs to csv for each year in years parameter
 
+    Parameters
+    ----------
+    ds: Xarray Dataset
+
+    quantiles: list
+        list of quantiles [.17, .5, .83, .95]
+
+    weights: pd.Series
+        Series of weights to apply to each model
+
+    dim: str
+        time dimension to apply weights 
+
+    years: list of years to produce weighted outputs
+
+
+    '''
+
+    # we need to drop some of the coords for the ds
+    ds = ds[2:,:,:,0]
 
     wtd = weighted_quantile_xr(ds, quantiles, weights, dim)
 
