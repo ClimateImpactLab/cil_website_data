@@ -29,7 +29,6 @@ def merge_datasets(filepaths, dim='model'):
 
     dim: str
         dimension to concatenate along
-
     '''
 
     mdls = []
@@ -64,13 +63,9 @@ def period_reduce(data,period=20, dim='year'):
     Xarray DataSet
     '''
 
-
-
     data['period'] = data[dim]//period*period
 
     return data.groupby('period').mean(dim=dim)
-
-
 
 
 def get_weights(path):
@@ -98,8 +93,6 @@ def get_weights(path):
     return weights.weight
 
 
-
-
 def upper_coord_names(ds, dim):
     '''
     Coerces coord names to upper case and removes 
@@ -112,16 +105,9 @@ def upper_coord_names(ds, dim):
     Returns
     -------
     Xarray Dataset
-
-
     '''
 
-
-
     ds[dim] = list(map(lambda x: x.upper(), ds[dim].values))
-
-
-    
 
     return ds
 
@@ -146,7 +132,6 @@ def get_quantiiles(ds, quantiles, weights, dim, years=['2020', '2040','2060','20
 
     years: list of years to produce weighted outputs
 
-
     '''
 
     # we need to drop some of the coords for the ds
@@ -156,6 +141,4 @@ def get_quantiiles(ds, quantiles, weights, dim, years=['2020', '2040','2060','20
 
     for i,year in enumerate(years): 
         df = wtd[i].to_pandas().T.to_csv('rcp45_quantiles_{}_.csv'.format(year))
-
-
 
